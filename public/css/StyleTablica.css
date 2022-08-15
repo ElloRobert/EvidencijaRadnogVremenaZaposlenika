@@ -1,0 +1,62 @@
+body{
+    margin:0%;
+    padding: 0%;
+}
+.container{
+  max-width: 90%;
+  margin: auto;
+}
+
+.container1{
+  max-width: 100%;
+  margin: auto;
+  text-align: center;
+}
+
+
+table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, table.dataTable tfoot td {
+    text-align: center;
+}
+
+table th{
+ background-color: rgb(182, 182, 182);
+  padding: 1vw 2vw;
+}
+
+.button-dodaj{
+    margin-bottom: 3vh;
+}
+.button-excel{
+  margin-bottom: 3vh;
+}
+
+  .gumbi a{
+    font-size: 2.5vh;
+    margin-left: 0.5vw;
+    width: 4vh;
+    height: 4vh;
+    background-color: buttonface;
+    color: black;
+    padding: 1px 6px;
+    border: 0.3vh solid black;
+    border-radius: 30%;
+  }
+  .gumbi button{
+    font-size: 2.5vh;
+    margin-left: 0.5vw;
+    width: 4vh;
+    height: 4vh;
+    background-color: buttonface;
+    color: black;
+    padding: 1px 6px;
+    border: 0.3vh solid black;
+    border-radius: 30%;
+  }
+
+  .gumbi .crvena{
+    background-color: red;
+  }
+  
+  .gumbi .zelena{
+    background-color: green;
+  }

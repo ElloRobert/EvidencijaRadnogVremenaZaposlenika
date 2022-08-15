@@ -1,0 +1,69 @@
+@extends('layouts.app')
+
+@section('css')
+<link href="{{ asset('css/Poduzece/dodajPoduzece.css') }}" rel="stylesheet">
+@endsection
+
+@section('content')
+
+<h3>Uredi rad</h3>
+<br>
+<form method="post" action="/home/uredeniRad" class="editPocetna">
+  @csrf
+  <div class="container">
+
+    <div class="row">
+        <div class="col-4">
+            <label for="id">Id:</label><br>
+            <input type="text" name="id" id="id" class="form-control input" placeholder="Id"value="{{$rad->id}}">
+        </div>
+
+    </div>
+    <div class="row">
+    <div class="col center">
+       <label for="datumRada">Datum rada:</label><br>
+       <input type="date" name="datumRada" id="datumRada" class="form-control input" placeholder="Datum rada"value="{{$rad->datumRada}}">
+    </div>
+    <div class="col center">
+        <label for="pocetakRada">Početak rada:</label><br>
+        <input type="time" name="pocetakRada" id="pocetakRada" class="form-control input" placeholder="Pocetak rada" value="{{$rad->pocetakRada}}">
+     </div>
+     <div class="col center">
+        <label for="krajRada">Kraj rada:</label><br>
+        <input type="time" name="krajRada" id="krajRada" class="form-control input" placeholder="Kraj rada" value="{{$rad->krajRada}}">
+     </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        <label for="kasnjenje">Kasnjenje:</label><br>
+        <input type="time" name="kasnjenje" id="kasnjenje" class="form-control input" placeholder="Kasnjenje" value="{{$rad->kasnjenje}}">
+          </div>
+      <div class="col">
+        <label for="zastoj">Zastoj:</label><br>
+        <input type="time" name="zastoj" id="zastoj" class="form-control input" placeholder="Zastoj" value="{{$rad->zastoj}}">
+      </div>
+
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        <p>Terenski rad:</p>
+          <input type="radio" id="da" name="terenskiRad" value="Da"   {{ $rad->terenskiRad == 'Da' ? 'checked' : ''}}>
+          <label for="html">Da</label><br>
+          <input type="radio" id="ne" name="terenskiRad" value="Ne" {{ $rad->terenskiRad == 'Ne' ? 'checked' : ''}}>
+          <label for="css">Ne</label><br>
+      </div>
+      <div class="col">
+        <p>Nenazocnost:</p>
+          <input type="radio" id="da" name="Nenazocnost" value="Da" {{ $rad->Nenazocnost == 'Da' ? 'checked' : ''}}>
+          <label for="html">Da</label><br>
+          <input type="radio" id="ne" name="Nenazocnost" value="Ne"  {{ $rad->Nenazocnost == 'Ne' ? 'checked' : ''}}>
+          <label for="css">Ne</label><br>
+      </div>
+    </div>
+    <br>
+    <br>
+    <input type="submit" name="potvrdi" value="Spremi promjene" class="btn btn-success float-right">
+</form>
+@endsection
