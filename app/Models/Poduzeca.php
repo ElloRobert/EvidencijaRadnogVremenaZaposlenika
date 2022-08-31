@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Poduzeca extends Model
 {
     use HasFactory;
+
+    public function Zaposlenici(){
+        return $this->hasMany(User::class);
+    } 
 }

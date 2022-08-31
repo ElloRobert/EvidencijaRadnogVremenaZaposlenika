@@ -13,7 +13,11 @@
                       <a class="nav-link poduzeca">Poduzeće</a>
                     </li>
                     <li class="nav-item ">
+                      @if(Auth::User()->hasRole('admin'))
                       <a class="nav-link zaposlenici">Zaposlenici</a>
+                      @else
+                      <a class="nav-link zaposlenici">Zaposlenik: {{Auth::User()->ime}} {{Auth::User()->prezime}}</a>
+                      @endif
                     </li>
                     <li class="nav-item ">
                       <a class="nav-link odradeniRad">Odrađeni rad</a>
@@ -22,9 +26,10 @@
                 </div>
     <div class="card-body">
     <div id="Poduzeca">
-                        <h3>Podaci o poduzeću:</h3>
-                        <a href='/home/dodajPoduzece'   class='btn  btn-success btn-lg float-left button-dodaj' title="Dodaj poduzeće"  >+ Novo poduzeće</a>
-                        <a style="font-size:16px" href='/download' class='btn  btn-secondary btn-lg float-right' title="Preuzmi excel tablicu"><i class="fa-solid fa-file-excel"></i></a>
+                        @if(Auth::User()->hasRole('admin'))
+                        <!--<a href='/home/dodajPoduzece'   class='btn  btn-success btn-lg float-left button-dodaj' title="Dodaj poduzeće"  >+ Novo poduzeće</a>-->
+                        @endif
+                        <a style="font-size:16px" href='/download' class='btn  btn-secondary btn-lg float-right button-dodaj' title="Preuzmi excel tablicu"><i class="fa-solid fa-file-excel"></i></a>
                         <table class="table_id">
                         <thead>
                         <tr >
@@ -47,11 +52,15 @@
                             <td>{{$poduzece->OIB}}</td>
                             <td>{{$poduzece->kontakt}}</td>
                             <td>{{$poduzece->email}}</td>
+                           
                             <td class="gumbi">
                               <a href="/home/pregledajPoduzece/{{$poduzece->id}}" title="Vidi sve podatke"><i class="fa-solid fa-eye"></i></a>
+                              @if(Auth::User()->hasRole('admin'))
                               <a href="/home/urediPoduzece/{{$poduzece->id}}" title="Uredi"><i class='fas fa-pencil-alt'> </i></a>
-                              <button class='fas poduzece-delete' data-toggle="modal" data-target="#myModal" data-narudzba_id="{{$poduzece->id}}" title="Obriši!"><i class='fas '>&#xf2ed;</i></button>
+                              <!--<button class='fas poduzece-delete' data-toggle="modal" data-target="#myModal" data-narudzba_id="{{$poduzece->id}}" title="Obriši!"><i class='fas '>&#xf2ed;</i></button>-->
+                              @endif
                             </td>
+                           
                         </tr>
                         @endforeach
                        @endif
@@ -59,9 +68,10 @@
                         </table>
                       </div>
     <div id="Zaposlenici">
-                        <h3>Popis zapolsenika:</h3>
+                        @if(Auth::User()->hasRole('admin'))
                         <a href='/home/dodajZaposlenika'   class='btn  btn-success btn-lg float-left button-dodaj'  title="Dodaj novog zaposlenika" >+ Novi zaposlenik</a>
-                        <a style="font-size:16px" href='/downloadZaposlenici' class='btn  btn-secondary btn-lg float-right' title="Preuzmi excel tablicu"><i class="fa-solid fa-file-excel"></i></a>
+                        @endif
+                        <a style="font-size:16px" href='/downloadZaposlenici' class='btn  btn-secondary btn-lg float-right button-dodaj' title="Preuzmi excel tablicu"><i class="fa-solid fa-file-excel"></i></a>
                         <table class="table_id">
                         <thead>
                         <tr >
@@ -69,7 +79,7 @@
                         <th>OIB</th>
                         <th>Kontakt</th>
                         <th>Email</th>
-                        <th>Adresa</th>
+                        <th>Poduzeće</th>
                         <th>Radno mjesto</th>
                         <th>Opcije</th>
                         </tr>
@@ -82,7 +92,7 @@
                             <td>{{$zaposlenik->OIB}}</td>
                             <td>{{$zaposlenik->kontakt}}</td>
                             <td>{{$zaposlenik->email}}</td>
-                            <td>{{$zaposlenik->ulica}} {{$zaposlenik->kucniBroj}} {{$zaposlenik->mjestoStanovanja}}</td>
+                            <td>{{$zaposlenik->poduzece->nazivPoduzeca}}</td>
                             <td>{{$zaposlenik->radnoMjesto}}</td>
                             <td class="gumbi">
                               <a href="/home/pregledajZaposlenika/{{$zaposlenik->id}}" title="Vidi sve podatke"><i class="fa-solid fa-eye"></i></a>
@@ -95,14 +105,14 @@
                          </tbody>
                          </table>
                          </div>
-                        <div id="OdradeniRad">
-                        <h3>Evidencija odrađenog rada:</h3>
+      <div id="OdradeniRad">
                         <a href='/home/dodajRad'   class='btn  btn-success btn-lg float-left button-dodaj'  title="Dodaj novog zaposlenika" >+ Unesi odrađeni rad</a>
                         <a style="font-size:16px" href='/downloadRad' class='btn  btn-secondary btn-lg float-right button-excel'><i class="fa-solid fa-file-excel"></i></a>
                         <table class="table_id">
                         <thead>
                         <tr >
                         <th>Datum</th>
+                        <th>Poduzeće</th>
                         <th>Zaposlenik</th>
                         <th>Početak rada</th>
                         <th>Kraj rada</th>
@@ -117,7 +127,8 @@
                           @foreach($odradeniRadovi as $odradeniRad)
                          <tr> 
                             <td>{{$odradeniRad->datumRada}}</td>
-                            <td>Robert Ello</td>
+                            <td>{{$odradeniRad->zaposlenik->poduzece->nazivPoduzeca}}</td>
+                            <td>{{$odradeniRad->zaposlenik->ime}}  {{$odradeniRad->zaposlenik->prezime}}</td>
                             <td> {{$odradeniRad->pocetakRada}}</td>
                             <td>{{$odradeniRad->krajRada}}</td>
                             <td>{{$odradeniRad->redovitiRad}}</td>
@@ -135,9 +146,15 @@
                          </table>
                          </div>    
     <div id="DodajRad">
+      @if(isset($odradeniRad))
+         @if($odradeniRad->Status == 'U tijeku')
         <a href="/home/zavrsiRad" class="btn btn-danger btn-block btn-lg" > Završi rad</a>
-        <br>
+        @else
         <a href="/home/zapocniRad" class="btn btn-success btn-block btn-lg">Započni rad</a>
+        @endif
+      @else
+      <a href="/home/zapocniRad" class="btn btn-success btn-block btn-lg">Započni rad</a>
+      @endif
        </div>   
                 </div>
               </div>

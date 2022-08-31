@@ -42,13 +42,18 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container container1">
-                <a href="/home/natrag"  class="navbar-brand float-left" >
+                @guest
+                @else
+                @if(isset($pocetna))
+                @else
+                <a onclick="history.go(-1);"  class="navbar-brand" >
                     <i class="fa-solid fa-arrow-left"></i>
                    </a>
-                
+                @endif
+                @endguest
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-                        <a class="navbar-brand" href="{{ url('/') }}">
+                        <a class="navbar-brand">
                             {{ 'Evidencija radnog vremena zaposlenika'}}
                         </a>
                     </ul>
@@ -61,20 +66,10 @@
                         </button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
+                         
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle odjava" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -84,7 +79,7 @@
                                       <a class="dropdown-item"  href="{{ route('logout') }}"
                                       onclick="event.preventDefault();
                                                     document.getElementById('logout-form').submit();">
-                                       {{ __('Log Out') }} &emsp;
+                                       {{ __('Odjavi se ') }} &emsp;
                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
 
                                    </a>

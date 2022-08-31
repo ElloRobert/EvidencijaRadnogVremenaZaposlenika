@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Poduzeca;
 use App\Exports\PoduzecaExport;
 use App\Models\Zaposlenici;
-use App\Exports\ZaposleniciExport;
+use App\Exports\UserExport;
 use App\Models\OdradeniRad;
 use App\Exports\RadExport;
 use App\Models\User;
@@ -14,6 +14,8 @@ use Faker\Core\DateTime;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -36,15 +38,30 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $trenutniKorisnik = Auth::user();
+        $pocetna =1;
+        if($trenutniKorisnik->hasRole('admin')){
         $poduzeca = Poduzeca::all();
         $brojPoduzeca= count($poduzeca);
         $zaposlenici = User::all();
         $brojZaposlenika = count($zaposlenici);
         $odradeniRadovi = OdradeniRad::all();
+        $brojOdradenihRadova = count($odradeniRadovi);  
+        }
+
+        else{
+        $poduzeca = Poduzeca::all();
+        $brojPoduzeca= count($poduzeca);
+        $zaposlenici = User::all()->where('id',$trenutniKorisnik->id);
+
+        $brojZaposlenika = 1;
+        $odradeniRadovi = OdradeniRad::all()->where('zaposlenik_id',$trenutniKorisnik->id);
         $brojOdradenihRadova = count($odradeniRadovi);
+        }
         //dd($brojPoduzeca);
         return view('home')->with('brojPoduzeca',$brojPoduzeca)->with('poduzeca',$poduzeca)->with('brojZaposlenika',$brojZaposlenika)
-        ->with('zaposlenici',$zaposlenici)->with('brojOdradenihRadova',$brojOdradenihRadova)->with('odradeniRadovi',$odradeniRadovi);     
+        ->with('zaposlenici',$zaposlenici)->with('brojOdradenihRadova',$brojOdradenihRadova)->with('odradeniRadovi',$odradeniRadovi)
+        ->with('pocetna',$pocetna);     
     }
 
     public function natrag()
@@ -130,6 +147,7 @@ class HomeController extends Controller
         $zaposlenik->mjestoStanovanja = $request->input('mjestoStanovanja');
         $zaposlenik->radnoMjesto = $request->input('radnoMjesto');
         $zaposlenik->name = $request->input('name');
+        $zaposlenik->poduzece_id = 1;
         if($request->input('password') == $request->input('password_confirmation')){
             $zaposlenik->password = Hash::make($request->input('password')) ;
             }
@@ -182,7 +200,7 @@ class HomeController extends Controller
 
     public function exportZaposlenici() 
     {
-        return Excel::download(new ZaposleniciExport, 'Zaposlenici.xlsx');
+        return Excel::download(new UserExport, 'Zaposlenici.xlsx');
     }
 
     public function zapocniRad(){
@@ -190,16 +208,17 @@ class HomeController extends Controller
         $rad->datumRada =date('Y-m-d');
         $rad->pocetakRada = date(' Y-m-d H:i:s');
         $rad->Status = 'U tijeku';
+        $rad->zaposlenik_id= Auth::user()->id;
         $rad ->save();
         return redirect('home');
     }
 
     public function zavrsiRad(){
-        $rad = OdradeniRad::all()->last();
+        $rad = OdradeniRad::all()->where('zaposlenik_id',Auth::user()->id)->last();
         $rad->krajRada = date(' Y-m-d H:i:s');
         $rad->Status = 'Završen';
         $date = Carbon::parse($rad->pocetakRada);
-        $diff = $date->diffInMinutes( $rad->krajRada);
+        $diff = $date->diffInHours( $rad->krajRada);
         if($diff>8){
             $prekovremeni = ($diff*10-80)/10;
              $rad->prekovremeniRad = $prekovremeni;
@@ -223,6 +242,7 @@ class HomeController extends Controller
         $rad->pocetakRada = $request->input('pocetakRada');
         $rad->krajRada = $request->input('krajRada');
         $rad->Status = 'Završen';
+        $rad->zaposlenik_id= Auth::user()->id;
         $date = Carbon::parse($rad->pocetakRada);
         $diff = $date->diffInHours( $rad->krajRada);
         if($diff>8){
